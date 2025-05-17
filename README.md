@@ -1,6 +1,6 @@
 - 👋 Hi, I’m Jishan-mansoori
-- 👀 I’m interested in software devloping
-- 🌱 I’m currently learning java
+- 👀 I’m interested in Data Science
+- 🌱 I’m currently learning java, python, numpy, pandas
 - 📫 How to reach me [you can contact me on jisan3951@gmail.com]
 - 😄 Pronouns: zeeshan mansoori
 - ⚡ Fun fact: that i am learning coding
