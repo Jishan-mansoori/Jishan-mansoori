@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Tools Dashboard</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4cc9f0;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-light: #f8f9fa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(to right, #4361ee, #3f37c9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tool-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: none;
+            transition: 0.3s;
+            font-size: 16px;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeEffect 0.5s;
+        }
+        
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Flashcard Viewer Styles */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 0 auto 20px;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: white;
+            border: 1px solid rgba(0,0,0,0.05);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #f8f9fa;
+        }
+        
+        .flashcard-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn-know {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-dont-know {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-next {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Quiz App Styles */
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .quiz-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .quiz-options {
+            margin: 25px 0;
+        }
+        
+        .quiz-option {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-option:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .quiz-option.selected {
+            background-color:  #d4edda;
+            color:  #155724;
+            border-color:  #c3e6cb;
+        }
+        
+        .quiz-result {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .quiz-score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .btn-retry {
+            background-color: var(--primary);
+            color: white;
+            margin-top: 15px;
+        }
+        
+        /* Habit Checklist Styles */
+        .habit-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .habit-list {
+            list-style: none;
+        }
+        
+        .habit-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .habit-checkbox {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+        
+        /* Course Catalog Styles */
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .course-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .course-image {
+            height: 120px;
+            background-color: #4361ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .course-info {
+            padding: 15px;
+        }
+        
+        .course-duration {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* Reading Log Styles */
+        .reading-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .reading-table th, .reading-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .reading-table th {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .reading-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .star-rating {
+            color: gold;
+            font-size: 18px;
+        }
+        
+        /* Markdown Editor Styles */
+        .markdown-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .markdown-input, .markdown-preview {
+            flex: 1;
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .markdown-input {
+            font-family: 'Courier New', Courier, monospace;
+            resize: vertical;
+        }
+        
+        .markdown-preview {
+            background-color: #f8f9fa;
+            overflow-y: auto;
+        }
+        
+        /* Adaptive Quiz Styles */
+        .difficulty-indicator {
+            height: 5px;
+            background-color: #e9ecef;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .difficulty-level {
+            height: 100%;
+            width: 33%;
+            background-color: var(--primary);
+            transition: width 0.5s;
+        }
+        
+        /* Video Player Styles */
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .video-player {
+            width: 100%;
+            background-color: #000;
+            margin-bottom: 20px;
+        }
+        
+        .video-comments {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .comment {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comment-timestamp {
+            color: var(--primary);
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        /* Lesson Tracker Styles */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background-color: var(--primary);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+        
+        .lesson {
+            padding: 10px 30px;
+            position: relative;
+            background-color: white;
+            width: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-radius: 5px;
+            cursor: move;
+        }
+        
+        .lesson.left {
+            left: 0;
+        }
+        
+        .lesson.right {
+            left: 50%;
+        }
+        
+        .lesson::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: white;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .lesson.left::after {
+            right: -10px;
+        }
+        
+        .lesson.right::after {
+            left: -10px;
+        }
+        
+        /* Spaced Repetition Styles */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 120px;
+            margin: 10px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .markdown-container {
+                flex-direction: column;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .lesson {
+                width: calc(100% - 60px);
+                padding-left: 70px;
+                padding-right: 20px;
+            }
+            
+            .lesson.left, .lesson.right {
+                left: 0;
+            }
+            
+            .lesson.left::after, .lesson.right::after {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Learning Tools Dashboard</h1>
+            <p>Interactive tools to enhance your learning experience</p>
+        </header>
+        
+        <div class="tool-section">
+            <div class="tab-container">
+                <button class="tab active" onclick="openTool(event, 'flashcard')">Flashcards</button>
+                <button class="tab" onclick="openTool(event, 'quiz')">Quiz</button>
+                <button class="tab" onclick="openTool(event, 'habits')">Habit Tracker</button>
+                <button class="tab" onclick="openTool(event, 'courses')">Course Catalog</button>
+                <button class="tab" onclick="openTool(event, 'reading')">Reading Log</button>
+                <button class="tab" onclick="openTool(event, 'markdown')">Markdown Editor</button>
+                <button class="tab" onclick="openTool(event, 'adaptive')">Adaptive Quiz</button>
+                <button class="tab" onclick="openTool(event, 'video')">Video Player</button>
+                <button class="tab" onclick="openTool(event, 'timeline')">Lesson Tracker</button>
+                <button class="tab" onclick="openTool(event, 'spaced')">Spaced Repetition</button>
+            </div>
+            
+            <!-- Flashcard Viewer -->
+            <div id="flashcard" class="tab-content active">
+                <h2>Flashcard Viewer</h2>
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="flipCard()">
+                        <div class="flashcard-front">
+                            <h3>What is the capital of France?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Paris</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard-controls">
+                    <button class="btn btn-know" onclick="markAsKnown()">I Know This</button>
+                    <button class="btn btn-dont-know" onclick="markAsUnknown()">Don't Know</button>
+                    <button class="btn btn-next" onclick="nextCard()">Next Card</button>
+                </div>
+            </div>
+            
+            <!-- Quiz App -->
+            <div id="quiz" class="tab-content">
+                <h2>Quiz App</h2>
+                <div class="quiz-container">
+                    <div id="quiz-questions">
+                        <div class="quiz-question" data-question="1">
+                            <h3>What is 2 + 2?</h3>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectOption(this)">3</div>
+                                <div class="quiz-option" onclick="selectOption(this)">4</div>
+                                <div class="quiz-option" onclick="selectOption(this)">5</div>
+                                <div class="quiz-option" onclick="selectOption(this)">6</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="2" style="display:none;">
+                            <h3>What is the largest planet in our solar system?</h3>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectOption(this)">Earth</div>
+                                <div class="quiz-option" onclick="selectOption(this)">Saturn</div>
+                                <div class="quiz-option" onclick="selectOption(this)">Jupiter</div>
+                                <div class="quiz-option" onclick="selectOption(this)">Mars</div>
+                            </div>
+                        </div>
+                        <div class="quiz-question" data-question="3" style="display:none;">
+                            <h3>Which language runs in a web browser?</h3>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="selectOption(this)">Java</div>
+                                <div class="quiz-option" onclick="selectOption(this)">C</div>
+                                <div class="quiz-option" onclick="selectOption(this)">Python</div>
+                                <div class="quiz-option" onclick="selectOption(this)">JavaScript</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-next" onclick="nextQuestion()" style="display:none;">Next Question</button>
+                    <div class="quiz-result" id="quiz-result">
+                        <h3>Quiz Completed!</h3>
+                        <div class="quiz-score">Your Score: <span id="quiz-score">0</span>/3</div>
+                        <button class="btn btn-retry" onclick="retryQuiz()">Try Again</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Habit Tracker -->
+            <div id="habits" class="tab-content">
+                <h2>Daily Habit Checklist</h2>
+                <div class="habit-container">
+                    <div class="progress-container">
+                        <h3>Daily Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="habit-progress"></div>
+                        </div>
+                        <p id="progress-text">0% Complete</p>
+                    </div>
+                    <ul class="habit-list" id="habit-list">
+                        <li class="habit-item">
+                            <input type="checkbox" class="habit-checkbox" id="habit1" onchange="updateProgress()">
+                            <label for="habit1">Read for 30 minutes</label>
+                        </li>
+                        <li class="habit-item">
+                            <input type="checkbox" class="habit-checkbox" id="habit2" onchange="updateProgress()">
+                            <label for="habit2">Exercise</label>
+                        </li>
+                        <li class="habit-item">
+                            <input type="checkbox" class="habit-checkbox" id="habit3" onchange="updateProgress()">
+                            <label for="habit3">Meditate</label>
+                        </li>
+                        <li class="habit-item">
+                            <input type="checkbox" class="habit-checkbox" id="habit4" onchange="updateProgress()">
+                            <label for="habit4">Drink 8 glasses of water</label>
+                        </li>
+                        <li class="habit-item">
+                            <input type="checkbox" class="habit-checkbox" id="habit5" onchange="updateProgress()">
+                            <label for="habit5">Learn something new</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Course Catalog -->
+            <div id="courses" class="tab-content">
+                <h2>Course Catalog</h2>
+                <div class="filter-controls">
+                    <select class="filter-select" id="topic-filter" onchange="filterCourses()">
+                        <option value="">All Topics</option>
+                        <option value="programming">Programming</option>
+                        <option value="design">Design</option>
+                        <option value="business">Business</option>
+                        <option value="science">Science</option>
+                    </select>
+                    <select class="filter-select" id="time-filter" onchange="filterCourses()">
+                        <option value="">Any Duration</option>
+                        <option value="short">Under 1 hour</option>
+                        <option value="medium">1-5 hours</option>
+                        <option value="long">5+ hours</option>
+                    </select>
+                </div>
+                <div class="course-grid" id="course-grid">
+                    <div class="course-card" data-topic="programming" data-duration="medium">
+                        <div class="course-image">JS</div>
+                        <div class="course-info">
+                            <h3>JavaScript Basics</h3>
+                            <p>Learn the fundamentals of JavaScript programming</p>
+                            <div class="course-duration">3 hours</div>
+                        </div>
+                    </div>
+                    <div class="course-card" data-topic="design" data-duration="short">
+                        <div class="course-image">UX</div>
+                        <div class="course-info">
+                            <h3>UX Design Principles</h3>
+                            <p>Essential user experience design concepts</p>
+                            <div class="course-duration">45 minutes</div>
+                        </div>
+                    </div>
+                    <div class="course-card" data-topic="business" data-duration="long">
+                        <div class="course-image">MBA</div>
+                        <div class="course-info">
+                            <h3>Business Strategy</h3>
+                            <p>Develop effective business strategies</p>
+                            <div class="course-duration">8 hours</div>
+                        </div>
+                    </div>
+                    <div class="course-card" data-topic="science" data-duration="medium">
+                        <div class="course-image">BIO</div>
+                        <div class="course-info">
+                            <h3>Introduction to Biology</h3>
+                            <p>Basic concepts of biological sciences</p>
+                            <div class="course-duration">2.5 hours</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reading Log -->
+            <div id="reading" class="tab-content">
+                <h2>Reading Log</h2>
+                <table class="reading-table" id="reading-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Title</th>
+                            <th onclick="sortTable(1)">Author</th>
+                            <th onclick="sortTable(2)">Date Read</th>
+                            <th onclick="sortTable(3)">Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>The Great Gatsby</td>
+                            <td>F. Scott Fitzgerald</td>
+                            <td>2023-05-15</td>
+                            <td class="star-rating">★★★★☆</td>
+                        </tr>
+                        <tr>
+                            <td>To Kill a Mockingbird</td>
+                            <td>Harper Lee</td>
+                            <td>2023-06-22</td>
+                            <td class="star-rating">★★★★★</td>
+                        </tr>
+                        <tr>
+                            <td>1984</td>
+                            <td>George Orwell</td>
+                            <td>2023-04-10</td>
+                            <td class="star-rating">★★★☆☆</td>
+                        </tr>
+                        <tr>
+                            <td>Pride and Prejudice</td>
+                            <td>Jane Austen</td>
+                            <td>2023-07-05</td>
+                            <td class="star-rating">★★★★☆</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Markdown Editor -->
+            <div id="markdown" class="tab-content">
+                <h2>Markdown Note Editor</h2>
+                <div class="markdown-container">
+                    <textarea class="markdown-input" id="markdown-input" placeholder="Write your markdown here..." oninput="updatePreview()"># Welcome to Markdown Editor
+
+**Markdown** is a lightweight markup language.
+
+## Features
+- Live preview
+- Easy formatting
+- Supports:
+  - Headers
+  - Lists
+  - Links
+  - And more!
+
+[Learn more about Markdown](https://www.markdownguide.org)</textarea>
+                    <div class="markdown-preview" id="markdown-preview"></div>
+                </div>
+            </div>
+            
+            <!-- Adaptive Quiz -->
+            <div id="adaptive" class="tab-content">
+                <h2>Adaptive Quiz</h2>
+                <div class="difficulty-indicator">
+                    <div class="difficulty-level" id="difficulty-level"></div>
+                </div>
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <h3 id="adaptive-question">What is the square root of 16?</h3>
+                        <div class="quiz-options" id="adaptive-options">
+                            <div class="quiz-option" onclick="answerAdaptiveQuestion(this, true)">4</div>
+                            <div class="quiz-option" onclick="answerAdaptiveQuestion(this, false)">8</div>
+                            <div class="quiz-option" onclick="answerAdaptiveQuestion(this, false)">2</div>
+                            <div class="quiz-option" onclick="answerAdaptiveQuestion(this, false)">32</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video Player -->
+            <div id="video" class="tab-content">
+                <h2>Interactive Video Player</h2>
+                <div class="video-container">
+                    <div class="video-player">
+                        <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-comments">
+                        <h3>Comments</h3>
+                        <div class="comment">
+                            <span class="comment-timestamp" onclick="seekVideo(30)">0:30</span>
+                            <span>This is an important concept!</span>
+                        </div>
+                        <div class="comment">
+                            <span class="comment-timestamp" onclick="seekVideo(120)">2:00</span>
+                            <span>Great explanation here</span>
+                        </div>
+                        <div class="comment">
+                            <span class="comment-timestamp" onclick="seekVideo(45)">0:45</span>
+                            <span>I didn't understand this part</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lesson Tracker -->
+            <div id="timeline" class="tab-content">
+                <h2>Lesson Tracker</h2>
+                <div class="timeline">
+                    <div class="lesson left" draggable="true" ondragstart="dragStart(event)">
+                        <h3>Introduction to HTML</h3>
+                        <p>Learn the basics of HTML structure</p>
+                        <small>Scheduled: Today</small>
+                    </div>
+                    <div class="lesson right" draggable="true" ondragstart="dragStart(event)">
+                        <h3>CSS Fundamentals</h3>
+                        <p>Styling your web pages</p>
+                        <small>Scheduled: Tomorrow</small>
+                    </div>
+                    <div class="lesson left" draggable="true" ondragstart="dragStart(event)">
+                        <h3>JavaScript Basics</h3>
+                        <p>Adding interactivity to your sites</p>
+                        <small>Scheduled: Day 3</small>
+                    </div>
+                    <div class="lesson right" draggable="true" ondragstart="dragStart(event)">
+                        <h3>Responsive Design</h3>
+                        <p>Making sites work on all devices</p>
+                        <small>Scheduled: Day 4</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Spaced Repetition -->
+            <div id="spaced" class="tab-content">
+                <h2>Spaced Repetition Flashcards</h2>
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="cards-due">12</div>
+                        <div class="stat-label">Cards Due</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="retention-rate">87%</div>
+                        <div class="stat-label">Retention Rate</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="streak-days">15</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                </div>
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="flipSpacedCard()">
+                        <div class="flashcard-front">
+                            <h3>What does CSS stand for?</h3>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Cascading Style Sheets</p>
+                            <div class="flashcard-controls" style="margin-top: 20px;">
+                                <button class="btn btn-know" onclick="rateCard(5)">Easy</button>
+                                <button class="btn btn-next" onclick="rateCard(3)">Good</button>
+                                <button class="btn btn-dont-know" onclick="rateCard(1)">Hard</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function openTool(evt, toolName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            document.getElementById(toolName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Initialize specific tool when opened
+            if (toolName === 'markdown') {
+                updatePreview();
+            }
+        }
+        
+        // Flashcard Viewer
+        function flipCard() {
+            document.querySelector('.flashcard').classList.toggle('flipped');
+        }
+        
+        function markAsKnown() {
+            alert('Marked as known! This would update your spaced repetition schedule.');
+            nextCard();
+        }
+        
+        function markAsUnknown() {
+            alert('Marked as unknown. This card will be shown again sooner.');
+            nextCard();
+        }
+        
+        function nextCard() {
+            const card = document.querySelector('.flashcard');
+            if (card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+            }
+            // In a real app, this would load the next card from a deck
+            document.querySelector('.flashcard-front h3').textContent = 'What is the largest ocean on Earth?';
+            document.querySelector('.flashcard-back p').textContent = 'The Pacific Ocean';
+        }
+        
+        // Quiz App
+        let currentQuestion = 1;
+        let score = 0;
+        
+        function selectOption(option) {
+            const options = option.parentElement.children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove('selected');
+            }
+            option.classList.add('selected');
+            document.querySelector('.btn-next').style.display = 'block';
+        }
+        
+        function nextQuestion() {
+            // Check if answer is correct (simplified for demo)
+            const selected = document.querySelector('.quiz-option.selected');
+            if (selected) {
+                if ((currentQuestion === 1 && selected.textContent === '4') ||
+                    (currentQuestion === 2 && selected.textContent === 'Jupiter') ||
+                    (currentQuestion === 3 && selected.textContent === 'JavaScript')) {
+                    score++;
+                }
+            }
+            
+            // Hide current question
+            document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).style.display = 'none';
+            
+            // Show next question or results
+            currentQuestion++;
+            if (currentQuestion <= 3) {
+                document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`).style.display = 'block';
+                document.querySelector('.btn-next').style.display = 'none';
+            } else {
+                document.getElementById('quiz-score').textContent = score;
+                document.getElementById('quiz-result').style.display = 'block';
+                document.querySelector('.btn-next').style.display = 'none';
+            }
+        }
+        
+        function retryQuiz() {
+            currentQuestion = 1;
+            score = 0;
+            document.getElementById('quiz-result').style.display = 'none';
+            
+            // Reset all questions
+            const questions = document.querySelectorAll('.quiz-question');
+            questions.forEach(q => {
+                q.style.display = 'none';
+                const options = q.querySelectorAll('.quiz-option');
+                options.forEach(opt => opt.classList.remove('selected'));
+            });
+            
+            // Show first question
+            document.querySelector('.quiz-question[data-question="1"]').style.display = 'block';
+        }
+        
+        // Habit Tracker
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.habit-checkbox');
+            let checked = 0;
+            
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) checked++;
+            });
+            
+            const percent = (checked / checkboxes.length) * 100;
+            document.getElementById('habit-progress').style.width = `${percent}%`;
+            document.getElementById('progress-text').textContent = `${Math.round(percent)}% Complete`;
+        }
+        
+        // Course Catalog
+        function filterCourses() {
+            const topicFilter = document.getElementById('topic-filter').value;
+            const timeFilter = document.getElementById('time-filter').value;
+            const courses = document.querySelectorAll('.course-card');
+            
+            courses.forEach(course => {
+                const topic = course.getAttribute('data-topic');
+                const duration = course.getAttribute('data-duration');
+                let show = true;
+                
+                if (topicFilter && topic !== topicFilter) show = false;
+                if (timeFilter) {
+                    if (timeFilter === 'short' && duration !== 'short') show = false;
+                    if (timeFilter === 'medium' && duration !== 'medium') show = false;
+                    if (timeFilter === 'long' && duration !== 'long') show = false;
+                }
+                
+                course.style.display = show ? 'block' : 'none';
+            });
+        }
+        
+        // Reading Log
+        function sortTable(column) {
+            const table = document.getElementById('reading-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            let isAscending = !tbody.getAttribute('data-sort-asc');
+            
+            rows.sort((a, b) => {
+                const aText = a.cells[column].textContent;
+                const bText = b.cells[column].textContent;
+                
+                // Special handling for dates and ratings
+                if (column === 2) { // Date column
+                    return isAscending 
+                        ? new Date(aText) - new Date(bText)
+                        : new Date(bText) - new Date(aText);
+                } else if (column === 3) { // Rating column
+                    return isAscending
+                        ? aText.length - bText.length
+                        : bText.length - aText.length;
+                } else {
+                    return isAscending
+                        ? aText.localeCompare(bText)
+                        : bText.localeCompare(aText);
+                }
+            });
+            
+            // Remove all rows
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            
+            // Add sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Toggle sort direction for next time
+            tbody.setAttribute('data-sort-asc', isAscending);
+        }
+        
+        // Markdown Editor
+        function updatePreview() {
+            const markdown = document.getElementById('markdown-input').value;
+            // Simple markdown parsing (in a real app, use a library like marked.js)
+            let html = markdown
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^- (.*$)/gm, '<li>$1</li>')
+                .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
+                .replace(/\n/g, '<br>');
+            
+            // Handle lists
+            html = html.replace(/<li>.*?<\/li>/g, match => {
+                return '<ul>' + match + '</ul>';
+            });
+            html = html.replace(/<\/ul><br><ul>/g, '');
+            
+            document.getElementById('markdown-preview').innerHTML = html;
+        }
+        
+        // Adaptive Quiz
+        let difficulty = 1; // 1-3 scale
+        
+        function answerAdaptiveQuestion(option, isCorrect) {
+            const options = option.parentElement.children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove('selected');
+            }
+            option.classList.add('selected');
+            
+            // Adjust difficulty based on answer
+            if (isCorrect) {
+                difficulty = Math.min(3, difficulty + 0.5);
+                setTimeout(() => loadAdaptiveQuestion(), 1000);
+            } else {
+                difficulty = Math.max(1, difficulty - 0.5);
+                setTimeout(() => loadAdaptiveQuestion(), 1000);
+            }
+            
+            // Update difficulty indicator
+            document.getElementById('difficulty-level').style.width = `${(difficulty / 3) * 100}%`;
+        }
+        
+        function loadAdaptiveQuestion() {
+            // In a real app, this would fetch a question based on current difficulty
+            const questions = [
+                {
+                    question: "What is 5 × 7?",
+                    options: ["12", "35", "57", "75"],
+                    correct: 1
+                },
+                {
+                    question: "Solve for x: 2x + 5 = 15",
+                    options: ["5", "10", "7.5", "20"],
+                    correct: 0
+                },
+                {
+                    question: "What is the derivative of x³?",
+                    options: ["3x²", "3x", "x⁴/4", "2x³"],
+                    correct: 0
+                }
+            ];
+            
+            const question = questions[Math.floor(difficulty) - 1];
+            document.getElementById('adaptive-question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('adaptive-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((opt, index) => {
+                const option = document.createElement('div');
+                option.className = 'quiz-option';
+                option.textContent = opt;
+                option.onclick = () => answerAdaptiveQuestion(option, index === question.correct);
+                optionsContainer.appendChild(option);
+            });
+            
+            // Reset selection
+            const options = optionsContainer.children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove('selected');
+            }
+        }
+        
+        // Video Player
+        function seekVideo(seconds) {
+            alert(`In a real app, this would seek to ${seconds} seconds`);
+            // Actual implementation would depend on the video player API
+            // For YouTube iframe: player.seekTo(seconds);
+        }
+        
+        // Lesson Tracker
+        let draggedItem = null;
+        
+        function dragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', draggedItem);
+        }
+        
+        // Spaced Repetition
+        function flipSpacedCard() {
+            document.querySelector('#spaced .flashcard').classList.toggle('flipped');
+        }
+        
+        function rateCard(rating) {
+            alert(`Card rated ${rating}/5. This would update its review schedule.`);
+            flipSpacedCard();
+            // In a real app, this would schedule the next review based on the rating
+            document.getElementById('cards-due').textContent = 
+                Math.max(0, parseInt(document.getElementById('cards-due').textContent) - 1);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
